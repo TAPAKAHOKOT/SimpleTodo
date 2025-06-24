@@ -5,9 +5,7 @@ class TaskListSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=32)
 
     def create(self, validated_data):
-        task_list = models.TaskList(**validated_data)
-        task_list.save()
-        return task_list
+        return models.TaskList.objects.create(**validated_data)
 
 class TaskSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=32)
@@ -21,6 +19,4 @@ class TaskSerializer(serializers.Serializer):
     task_list = serializers.PrimaryKeyRelatedField(queryset=models.TaskList.objects.all())
 
     def create(self, validated_data):
-        task = models.Task(**validated_data)
-        task.save()
-        return task
+        return models.Task.objects.create(**validated_data)
