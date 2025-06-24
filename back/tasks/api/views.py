@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 import datetime
 
+from django.db.models import Case, When, Value, IntegerField
 from tasks import models
 from tasks.tasks import repeat_task
 
@@ -13,7 +14,17 @@ class TaskListViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TaskListSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = models.Task.objects.all()
+    queryset = models.Task.objects.annotate(
+        priority_order=Case(
+            When(priority='onfire', then=Value(0)),
+            When(priority='onfire', then=Value(1)),
+            When(priority='medium', then=Value(2)),
+            When(priority='low', then=Value(3)),
+            output_field=IntegerField()
+        )
+    ).order_by(
+        'is_completed', 'priority_order', 'title',
+    )
     serializer_class = serializers.TaskSerializer
 
     def mark_completion(self, is_completed: bool):
@@ -29,13 +40,13 @@ class TaskViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def completed(self, request, pk=None):
         task = self.get_object()
-        if task.repeat_after_minutes:
+        if task.repeat_after_seconds:
             repeat_task.apply_async(args=[{
                 'title': task.title,
                 'priority': task.priority,
-                'repeat_after_minutes': task.repeat_after_minutes,
+                'repeat_after_seconds': task.repeat_after_seconds,
                 'task_list_id': task.task_list.id,
-            }], countdown=task.repeat_after_minutes)
+            }], countdown=task.repeat_after_seconds)
         
         return self.mark_completion(True)
 

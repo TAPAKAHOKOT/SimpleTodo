@@ -3,5 +3,4 @@ from tasks import models
 
 @shared_task
 def repeat_task(task_data):
-    print('creating a task copy', task_data)
     return models.Task.objects.create(**task_data)

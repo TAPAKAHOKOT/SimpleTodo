@@ -14,6 +14,6 @@ class Task(models.Model):
 
     priority = models.CharField(choices=choices.TASKS_PRIORITIES, null=True, blank=True)
 
-    repeat_after_minutes = models.IntegerField(null=True, blank=True)
+    repeat_after_seconds = models.IntegerField(null=True, blank=True)
     
     task_list = models.ForeignKey(TaskList, on_delete=models.PROTECT, related_name='tasks')

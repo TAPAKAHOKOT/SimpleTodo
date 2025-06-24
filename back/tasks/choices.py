@@ -1,7 +1,7 @@
 
 TASKS_PRIORITIES = {
     'onfire': 'On fire',
-    'high': 'High',
+    'onfire': 'High',
     'medium': 'Medium',
     'low': 'Low',
 }

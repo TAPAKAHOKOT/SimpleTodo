@@ -25,7 +25,7 @@ class TaskSerializer(serializers.Serializer):
 
     priority = serializers.ChoiceField(choices.TASKS_PRIORITIES)
 
-    repeat_after_minutes = serializers.IntegerField(required=False)
+    repeat_after_seconds = serializers.IntegerField(required=False, allow_null=True)
     task_list = serializers.PrimaryKeyRelatedField(queryset=models.TaskList.objects.all())
 
     def create(self, validated_data):
