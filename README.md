@@ -13,5 +13,9 @@
 
 - backend: django
 - api: drf
-- frontend: vue 2/3 (что-то простое)
-- по возможности запуск в докере
+- frontend: vue 3 (что-то простое)
+- запуск в докере
+
+## Регулярные задачи
+
+После завершения задачи с не пустым `repeat_after_seconds` - создастся таска в rabbitmq, которая запустится celery через `repeat_after_seconds` секунд
