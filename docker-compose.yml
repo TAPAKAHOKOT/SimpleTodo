@@ -37,6 +37,19 @@ services:
     depends_on:
       - rabbitmq
       - db
+  
+  front:
+    build:
+      context: ./front
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    ports:
+      - "${FRONT_PORT}:5173"
+    environment:
+      - VITE_API_URL=${API_URL}
+    depends_on:
+      - back
 
 volumes:
   postgres_data:
