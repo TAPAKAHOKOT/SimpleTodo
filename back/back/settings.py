@@ -28,6 +28,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# CELERY
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://rabbit:rabbit@rabbitmq:5672/')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 
 # Application definition
 

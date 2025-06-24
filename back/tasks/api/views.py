@@ -4,8 +4,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 import datetime
 
-
 from tasks import models
+from tasks.tasks import repeat_task
+
 
 class TaskListViewSet(viewsets.ModelViewSet):
     queryset = models.TaskList.objects.all()
@@ -16,7 +17,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TaskSerializer
 
     def mark_completion(self, is_completed: bool):
-        task: models.Task = self.get_object()
+        task = self.get_object()
 
         task.is_completed = is_completed
         task.completed_at = datetime.datetime.now() if is_completed else None
@@ -27,6 +28,15 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def completed(self, request, pk=None):
+        task = self.get_object()
+        if task.repeat_after_minutes:
+            repeat_task.apply_async(args=[{
+                'title': task.title,
+                'priority': task.priority,
+                'repeat_after_minutes': task.repeat_after_minutes,
+                'task_list_id': task.task_list.id,
+            }], countdown=task.repeat_after_minutes)
+        
         return self.mark_completion(True)
 
     @action(detail=True, methods=['post'])

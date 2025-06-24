@@ -17,6 +17,26 @@ services:
       - .env
     depends_on:
       - db
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "${RABBITMQ_BROKER_PORT}:5672"
+      - "${RABBITMQ_WEB_PORT}:15672"
+    env_file:
+      - .env
+  
+  celery:
+    build: ./back
+    command: >
+      sh -c "celery -A back worker --loglevel=info"
+    volumes:
+      - ./back:/app
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - db
 
 volumes:
   postgres_data:
